@@ -26,6 +26,8 @@
     var player;
     var cursor;
     var stars;
+    var score = 0;
+    var scoreText;
 
     function preload() {
       game.load.image('sky', 'assets/sky.png');
@@ -92,6 +94,12 @@
         // give each star a little bounce
         star.body.bounce.y = 0.7 + Math.random() * 0.2;
       }
+
+      // create the scorecard
+      scoreText = game.add.text(16, 16, 'score: 0', {
+        fontSize: '32px',
+        fill: '#000'
+      });
     }
 
     function update() {
@@ -127,6 +135,10 @@
     function collectStar(player, star) {
       // Removes the star from the screen
       star.kill();
+
+      // add and update the score
+      score += 10;
+      scoreText.text = 'Score: ' + score;
     }
   </script>
 
