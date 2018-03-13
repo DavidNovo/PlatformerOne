@@ -18,7 +18,7 @@
         // this is a global variable
         // as long as all processing is on this page, no big deal.
 
-        // global abatement
+        // global abatement, using an object literal
         var PLATFORMER_ONE = {};
 
         PLATFORMER_ONE.game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
@@ -26,12 +26,12 @@
             create: create,
             update: update
         });
-        var platforms;
-        var player;
+
+        //var player;
         var cursor;
         var stars;
         var score = 0;
-        var scoreText;
+        //var scoreText;
 
         function preload() {
             PLATFORMER_ONE.game.load.image('sky', 'assets/sky.png');
@@ -52,36 +52,36 @@
 
             //  The platforms group contains the ground and the 2 ledges we can jump on
             // this is using a global variable called platforms
-            platforms = PLATFORMER_ONE.game.add.group();
+            PLATFORMER_ONE.platforms = PLATFORMER_ONE.game.add.group();
 
             //  We will enable physics for any object that is created in this group
-            platforms.enableBody = true;
+            PLATFORMER_ONE.platforms.enableBody = true;
 
             // Here we create the ground.
-            var ground = platforms.create(0, PLATFORMER_ONE.game.world.height - 64, 'ground');
+            PLATFORMER_ONE.ground = PLATFORMER_ONE.platforms.create(0, PLATFORMER_ONE.game.world.height - 64, 'ground');
 
             //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
-            ground.scale.setTo(2, 2);
+            PLATFORMER_ONE.ground.scale.setTo(2, 2);
 
             //  This stops it from falling away when you jump on it
-            ground.body.immovable = true;
+            PLATFORMER_ONE.ground.body.immovable = true;
 
             //  Now let's create two ledges
-            var ledge = platforms.create(400, 400, 'ground');
+            var ledge = PLATFORMER_ONE.platforms.create(400, 400, 'ground');
             ledge.body.immovable = true;
-            ledge = platforms.create(-150, 250, 'ground');
+            ledge = PLATFORMER_ONE.platforms.create(-150, 250, 'ground');
             ledge.body.immovable = true;
 
             // now create the player
-            player = PLATFORMER_ONE.game.add.sprite(32, PLATFORMER_ONE.game.world.height - 150, 'dude');
+            PLATFORMER_ONE.player = PLATFORMER_ONE.game.add.sprite(32, PLATFORMER_ONE.game.world.height - 150, 'dude');
             //// enable physics and add properties
-            PLATFORMER_ONE.game.physics.arcade.enable(player);
-            player.body.bounce.y = 0.2;
-            player.body.gravity.y = 300;
-            player.body.collideWorldBounds = true;
+            PLATFORMER_ONE.game.physics.arcade.enable(PLATFORMER_ONE.player);
+            PLATFORMER_ONE.player.body.bounce.y = 0.2;
+            PLATFORMER_ONE.player.body.gravity.y = 300;
+            PLATFORMER_ONE.player.body.collideWorldBounds = true;
             ////  Our two animations, walking left and right.
-            player.animations.add('left', [0, 1, 2, 3], 10, true);
-            player.animations.add('right', [5, 6, 7, 8], 10, true);
+            PLATFORMER_ONE.player.animations.add('left', [0, 1, 2, 3], 10, true);
+            PLATFORMER_ONE.player.animations.add('right', [5, 6, 7, 8], 10, true);
 
             // create movement controls
             cursors = PLATFORMER_ONE.game.input.keyboard.createCursorKeys();
@@ -100,7 +100,7 @@
             }
 
             // create the scorecard
-            scoreText = PLATFORMER_ONE.game.add.text(16, 16, 'score: 0', {
+            PLATFORMER_ONE.scoreText = PLATFORMER_ONE.game.add.text(16, 16, 'score: 0', {
                 fontSize: '32px',
                 fill: '#000'
             });
@@ -108,29 +108,29 @@
 
         function update() {
             // collision detection
-            hitPlatform = PLATFORMER_ONE.game.physics.arcade.collide(player, platforms);
-            PLATFORMER_ONE.game.physics.arcade.collide(stars, platforms);
-            PLATFORMER_ONE.game.physics.arcade.overlap(player, stars, collectStar, null, this);
+            hitPlatform = PLATFORMER_ONE.game.physics.arcade.collide(PLATFORMER_ONE.player, PLATFORMER_ONE.platforms);
+            PLATFORMER_ONE.game.physics.arcade.collide(stars, PLATFORMER_ONE.platforms);
+            PLATFORMER_ONE.game.physics.arcade.overlap(PLATFORMER_ONE.player, stars, collectStar, null, this);
 
             //  Reset the players velocity (movement)
-            player.body.velocity.x = 0;
+            PLATFORMER_ONE.player.body.velocity.x = 0;
             if (cursors.left.isDown) {
                 //  Move to the left
-                player.body.velocity.x = -150;
-                player.animations.play('left');
+                PLATFORMER_ONE.player.body.velocity.x = -150;
+                PLATFORMER_ONE.player.animations.play('left');
             } else if (cursors.right.isDown) {
                 //  Move to the right
-                player.body.velocity.x = 150;
-                player.animations.play('right');
+                PLATFORMER_ONE.player.body.velocity.x = 150;
+                PLATFORMER_ONE.player.animations.play('right');
             } else {
                 //  Stand still
-                player.animations.stop();
-                player.frame = 4;
+                PLATFORMER_ONE.player.animations.stop();
+                PLATFORMER_ONE.player.frame = 4;
             }
 
             //  Allow the player to jump if they are touching the ground.
-            if (cursors.up.isDown && player.body.touching.down && hitPlatform) {
-                player.body.velocity.y = -350;
+            if (cursors.up.isDown && PLATFORMER_ONE.player.body.touching.down && hitPlatform) {
+                PLATFORMER_ONE.player.body.velocity.y = -350;
             }
 
         }
@@ -142,7 +142,7 @@
 
             // add and update the score
             score += 10;
-            scoreText.text = 'Score: ' + score;
+            PLATFORMER_ONE.scoreText.text = 'Score: ' + score;
         }
     </script>
 
