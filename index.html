@@ -26,12 +26,8 @@
             create: create,
             update: update
         });
+        PLATFORMER_ONE.score = 0;
 
-        //var player;
-        var cursor;
-        var stars;
-        var score = 0;
-        //var scoreText;
 
         function preload() {
             PLATFORMER_ONE.game.load.image('sky', 'assets/sky.png');
@@ -67,6 +63,7 @@
             PLATFORMER_ONE.ground.body.immovable = true;
 
             //  Now let's create two ledges
+            // this is a local variable because it is defined in a function
             var ledge = PLATFORMER_ONE.platforms.create(400, 400, 'ground');
             ledge.body.immovable = true;
             ledge = PLATFORMER_ONE.platforms.create(-150, 250, 'ground');
@@ -84,15 +81,16 @@
             PLATFORMER_ONE.player.animations.add('right', [5, 6, 7, 8], 10, true);
 
             // create movement controls
-            cursors = PLATFORMER_ONE.game.input.keyboard.createCursorKeys();
+            PLATFORMER_ONE.cursors = PLATFORMER_ONE.game.input.keyboard.createCursorKeys();
 
             // creates stars
-            stars = PLATFORMER_ONE.game.add.group();
-            stars.enableBody = true;
+            PLATFORMER_ONE.stars = PLATFORMER_ONE.game.add.group();
+            PLATFORMER_ONE.stars.enableBody = true;
             //// create 12 stars and spread them out
             for (var i = 0; i < 12; i++) {
                 // create a star inside of the stars group
-                var star = stars.create(i * 70, 0, 'star');
+                // this is really a local variable because it is defined inside a function
+                var star = PLATFORMER_ONE.stars.create(i * 70, 0, 'star');
                 // let gravity work
                 star.body.gravity.y = 10;
                 // give each star a little bounce
@@ -109,16 +107,16 @@
         function update() {
             // collision detection
             hitPlatform = PLATFORMER_ONE.game.physics.arcade.collide(PLATFORMER_ONE.player, PLATFORMER_ONE.platforms);
-            PLATFORMER_ONE.game.physics.arcade.collide(stars, PLATFORMER_ONE.platforms);
-            PLATFORMER_ONE.game.physics.arcade.overlap(PLATFORMER_ONE.player, stars, collectStar, null, this);
+            PLATFORMER_ONE.game.physics.arcade.collide(PLATFORMER_ONE.stars, PLATFORMER_ONE.platforms);
+            PLATFORMER_ONE.game.physics.arcade.overlap(PLATFORMER_ONE.player, PLATFORMER_ONE.stars, collectStar, null, this);
 
             //  Reset the players velocity (movement)
             PLATFORMER_ONE.player.body.velocity.x = 0;
-            if (cursors.left.isDown) {
+            if (PLATFORMER_ONE.cursors.left.isDown) {
                 //  Move to the left
                 PLATFORMER_ONE.player.body.velocity.x = -150;
                 PLATFORMER_ONE.player.animations.play('left');
-            } else if (cursors.right.isDown) {
+            } else if (PLATFORMER_ONE.cursors.right.isDown) {
                 //  Move to the right
                 PLATFORMER_ONE.player.body.velocity.x = 150;
                 PLATFORMER_ONE.player.animations.play('right');
@@ -129,7 +127,7 @@
             }
 
             //  Allow the player to jump if they are touching the ground.
-            if (cursors.up.isDown && PLATFORMER_ONE.player.body.touching.down && hitPlatform) {
+            if (PLATFORMER_ONE.cursors.up.isDown && PLATFORMER_ONE.player.body.touching.down && hitPlatform) {
                 PLATFORMER_ONE.player.body.velocity.y = -350;
             }
 
@@ -141,8 +139,8 @@
             star.kill();
 
             // add and update the score
-            score += 10;
-            PLATFORMER_ONE.scoreText.text = 'Score: ' + score;
+            PLATFORMER_ONE.score += 10;
+            PLATFORMER_ONE.scoreText.text = 'Score: ' + PLATFORMER_ONE.score;
         }
     </script>
 
